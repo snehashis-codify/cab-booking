@@ -12,12 +12,15 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
-// import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { handleSignup } from "@/lib/features/users/userSlice";
 // import FormError from "@/components/form-error";
 // import FormSuccess from "@/components/form-success";
-// import { createUserWithEmailAndPassword } from "firebase/auth";
-// import { auth } from "@/utils/firebase";
 export default function RegisterForm() {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { loadingSignup } = useAppSelector((state) => state.user);
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
@@ -27,17 +30,13 @@ export default function RegisterForm() {
     },
   });
   function onSubmit(values: z.infer<typeof RegisterSchema>) {
-    console.log(values);
-    // createUserWithEmailAndPassword(auth, values.email, values.password)
-    //   .then((userCredential) => {
-    //     console.log(userCredential);
-    //   })
-    //   .catch((error) => {
-    //     const errorCode = error.code;
-    //     const errorMessage = error.message;
-    //     console.log(error);
-    //     // ..
-    //   });
+    dispatch(
+      handleSignup({
+        email: values.email,
+        password: values.password,
+        navigate: navigate,
+      })
+    );
   }
   return (
     <Form {...form}>
@@ -107,9 +106,10 @@ export default function RegisterForm() {
           <FormSuccess message="" /> */}
           <Button
             type="submit"
+            disabled={loadingSignup}
             className="w-full bg-yellow-500 hover:bg-yellow-600 text-black"
           >
-            Sign Up
+            {loadingSignup ? "Loading..." : "Sign Up"}
           </Button>
         </div>
       </form>

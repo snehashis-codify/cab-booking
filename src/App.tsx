@@ -14,6 +14,7 @@ function App() {
       element: <Home />,
     },
   ]);
+
   return <RouterProvider router={appRouter} />;
 }
 

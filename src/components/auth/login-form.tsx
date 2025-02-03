@@ -12,9 +12,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoginSchema } from "@/schemas";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/utils/firebase";
+import { useNavigate } from "react-router-dom";
 // import FormError from "@/components/form-error";
 // import FormSuccess from "@/components/form-success";
 export default function LoginForm() {
+  const navigate = useNavigate();
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -24,14 +28,16 @@ export default function LoginForm() {
   });
   function onSubmit(values: z.infer<typeof LoginSchema>) {
     console.log(values);
-    // signInWithEmailAndPassword(auth, values.email, values.password)
-    //   .then((userCredential) => {
-    //     console.log(userCredential);
-    //   })
-    //   .catch((error) => {
-    //     const errorCode = error.code;
-    //     const errorMessage = error.message;
-    //   });
+    signInWithEmailAndPassword(auth, values.email, values.password)
+      .then((userCredential) => {
+        navigate("/");
+        console.log(userCredential);
+      })
+      .catch((error) => {
+        // const errorCode = error.code;
+        // const errorMessage = error.message;
+        console.log(error);
+      });
   }
   return (
     <Form {...form}>
