@@ -15,6 +15,7 @@ import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { handleSignup } from "@/lib/features/users/userSlice";
+import Spinner from "@/utils/Spinner";
 // import FormError from "@/components/form-error";
 // import FormSuccess from "@/components/form-success";
 export default function RegisterForm() {
@@ -107,9 +108,9 @@ export default function RegisterForm() {
           <Button
             type="submit"
             disabled={loadingSignup}
-            className="w-full bg-yellow-500 hover:bg-yellow-600 text-black"
+            className={`w-full ${loadingSignup ? "bg-gray-500 hover:bg-gray-600" : " bg-yellow-500 hover:bg-yellow-600 text-black"}`}
           >
-            {loadingSignup ? "Loading..." : "Sign Up"}
+            {loadingSignup ? <Spinner /> : "Sign Up"}
           </Button>
         </div>
       </form>

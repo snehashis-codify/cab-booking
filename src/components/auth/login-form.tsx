@@ -12,12 +12,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoginSchema } from "@/schemas";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/utils/firebase";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { handleSignin } from "@/lib/features/users/userSlice";
+import Spinner from "@/utils/Spinner";
 // import FormError from "@/components/form-error";
 // import FormSuccess from "@/components/form-success";
 export default function LoginForm() {
+  const dispatch = useAppDispatch();
+  const { loadingSignin } = useAppSelector((state) => state.user);
   const navigate = useNavigate();
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
@@ -27,17 +30,13 @@ export default function LoginForm() {
     },
   });
   function onSubmit(values: z.infer<typeof LoginSchema>) {
-    console.log(values);
-    signInWithEmailAndPassword(auth, values.email, values.password)
-      .then((userCredential) => {
-        navigate("/");
-        console.log(userCredential);
+    dispatch(
+      handleSignin({
+        email: values.email,
+        password: values.password,
+        navigate: navigate,
       })
-      .catch((error) => {
-        // const errorCode = error.code;
-        // const errorMessage = error.message;
-        console.log(error);
-      });
+    );
   }
   return (
     <Form {...form}>
@@ -87,9 +86,10 @@ export default function LoginForm() {
           <FormSuccess message="" /> */}
           <Button
             type="submit"
-            className="w-full bg-yellow-500 hover:bg-yellow-600 text-black"
+            disabled={loadingSignin}
+            className={`w-full ${loadingSignin ? "bg-gray-500 hover:bg-gray-600" : " bg-yellow-500 hover:bg-yellow-600 text-black"} `}
           >
-            Sign In
+            {loadingSignin ? <Spinner /> : "Sign In"}
           </Button>
         </div>
       </form>

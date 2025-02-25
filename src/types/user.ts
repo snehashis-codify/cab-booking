@@ -5,6 +5,7 @@ export type sliceState = {
   name: string | null | undefined;
   email: string | undefined | null;
   loadingSignup: boolean;
+  loadingSignin: boolean;
   error?: string | null;
 };
 export interface CredentialArgs {

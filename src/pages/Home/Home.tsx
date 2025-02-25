@@ -1,4 +1,7 @@
-import { Button } from "@/components/ui/button";
+import Booking from "@/components/booking/booking";
+import MapComponent from "@/components/map/MapComponent";
+import Navbar from "@/components/navbar/Navbar";
+import { getLocation } from "@/lib/features/maps/mapSlice";
 import { addUser, removeUser } from "@/lib/features/users/userSlice";
 import { useAppDispatch } from "@/lib/hooks";
 import { auth } from "@/utils/firebase";
@@ -15,6 +18,7 @@ function Home() {
       if (user) {
         const { email, uid, displayName } = user;
         dispatch(addUser({ userId: uid, email: email, name: displayName }));
+
         navigate("/");
       } else {
         dispatch(removeUser());
@@ -22,10 +26,27 @@ function Home() {
       }
     });
   }, [dispatch, navigate]);
+  useEffect(() => {
+    window.navigator.geolocation.getCurrentPosition(function (pos) {
+      dispatch(
+        getLocation({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+        })
+      );
+    });
+  }, [dispatch]);
   return (
     <div>
-      Home
-      <Button>Sign out</Button>
+      <Navbar />
+      <div className="grid grid-cols-1 md:grid-cols-3">
+        <div className="">
+          <Booking />
+        </div>
+        <div className="col-span-2 order-first md:order-last">
+          <MapComponent />
+        </div>
+      </div>
       <MetaDataProvider
         title="CabEase Home"
         content="Your reliable ride, just a tap away"

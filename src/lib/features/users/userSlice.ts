@@ -1,13 +1,17 @@
 import { CredentialArgs, sliceState } from "@/types/user";
 import { auth } from "@/utils/firebase";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 
 const initialState: sliceState = {
   userId: "",
   name: "",
   email: "",
   loadingSignup: false,
+  loadingSignin: false,
   error: null,
 };
 
@@ -33,7 +37,30 @@ export const handleSignup = createAsyncThunk(
     }
   }
 );
-export const userSlice = createSlice({
+
+export const handleSignin = createAsyncThunk(
+  "user/signin",
+  async (args: CredentialArgs, thunkAPI) => {
+    const { email, password, navigate } = args;
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      navigate("/");
+      return {
+        userId: userCredential.user.uid,
+        name: userCredential.user.displayName,
+        email: userCredential.user.email,
+      };
+    } catch (error) {
+      console.log(error);
+      thunkAPI.rejectWithValue("Failed to login");
+    }
+  }
+);
+const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
@@ -44,9 +71,9 @@ export const userSlice = createSlice({
       state.email = email;
     },
     removeUser(state) {
-      state.userId = "";
-      state.name = "";
-      state.email = "";
+      state.userId = initialState.userId;
+      state.name = initialState.name;
+      state.email = initialState.email;
     },
   },
   extraReducers: (builder) => {
@@ -62,6 +89,19 @@ export const userSlice = createSlice({
       })
       .addCase(handleSignup.rejected, (state, action) => {
         state.loadingSignup = false;
+        state.error = action.error.message;
+      })
+      .addCase(handleSignin.pending, (state) => {
+        state.loadingSignin = true;
+      })
+      .addCase(handleSignin.fulfilled, (state, action) => {
+        state.loadingSignin = false;
+        state.name = action.payload?.name;
+        state.userId = action.payload?.userId;
+        state.email = action.payload?.email;
+      })
+      .addCase(handleSignin.rejected, (state, action) => {
+        state.loadingSignin = false;
         state.error = action.error.message;
       });
   },
