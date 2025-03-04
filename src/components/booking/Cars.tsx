@@ -1,9 +1,17 @@
 import { carList } from "@/constants/constant";
+import { useAppSelector } from "@/lib/hooks";
 import { Id } from "@/types/type";
 import { useState } from "react";
+import { Skeleton } from "../ui/skeleton";
 
 function Cars() {
+  const { distance, loadingRouteDirection } = useAppSelector(
+    (state) => state.map
+  );
   const [selectorChange, setSelectorChange] = useState<Id>(1);
+  function getCharges(price: number) {
+    return (price * distance).toFixed(2);
+  }
   return (
     <div className="mt-3">
       <h2 className="font-semibold">Select Car</h2>
@@ -21,12 +29,21 @@ function Cars() {
               height={90}
               className="w-full"
             />
-            <div className="flex justify-between items-center">
-              <h2 className="text-[12px] text-gray-500">{data.car_type}</h2>
-              <span className="float-right text-black font-medium">
-                ₹{data.car_price}
-              </span>
-            </div>
+            {
+              <div className="flex justify-between items-center">
+                <h2 className="text-[12px] text-gray-500">{data.car_type}</h2>
+
+                {!loadingRouteDirection ? (
+                  distance > 0 ? (
+                    <span className="float-right text-black font-medium">
+                      ₹{getCharges(data.car_price)}
+                    </span>
+                  ) : null
+                ) : (
+                  <Skeleton className="w-1/2 rounded-lg h-2" />
+                )}
+              </div>
+            }
           </div>
         ))}
       </div>

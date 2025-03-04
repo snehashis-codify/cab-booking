@@ -28,7 +28,7 @@ export const carList: CarList = [
   {
     id: 1,
     car_type: "Economy",
-    car_price: 173,
+    car_price: 30,
     car_image: {
       name: "Car 1",
       path: Car1,
@@ -37,7 +37,7 @@ export const carList: CarList = [
   {
     id: 2,
     car_type: "MiniVan",
-    car_price: 300,
+    car_price: 32,
     car_image: {
       name: "Car 2",
       path: Car2,
@@ -46,7 +46,7 @@ export const carList: CarList = [
   {
     id: 3,
     car_type: "Comfort",
-    car_price: 500,
+    car_price: 35,
     car_image: {
       name: "Car 3",
       path: Car3,
@@ -55,7 +55,7 @@ export const carList: CarList = [
   {
     id: 4,
     car_type: "Luxury",
-    car_price: 700,
+    car_price: 40,
     car_image: {
       name: "Car 4",
       path: Car4,
@@ -64,7 +64,7 @@ export const carList: CarList = [
   {
     id: 5,
     car_type: "Electric",
-    car_price: 900,
+    car_price: 45,
     car_image: {
       name: "Car 5",
       path: Car5,
